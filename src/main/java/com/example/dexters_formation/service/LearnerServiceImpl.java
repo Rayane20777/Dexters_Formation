@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +22,10 @@ public class LearnerServiceImpl implements LearnerService {
     @Override
     public List<Learner> getAll() {
         return learnerRepository.findAll();
+    }
+
+    @Override
+    public Learner getById(UUID id) {
+        return learnerRepository.findById(id).orElse(null);
     }
 }
