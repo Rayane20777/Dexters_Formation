@@ -11,5 +11,5 @@ public interface ProgramService {
     List<Program> getAll();
     Optional<Program> getById(UUID id);
     Program update(UUID id, Program program);
-
+    public void delete(UUID id);
 }

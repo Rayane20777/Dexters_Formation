@@ -37,4 +37,10 @@ public class ProgramController {
     public ResponseEntity<Program> update(@PathVariable UUID id, @Valid @RequestBody Program program) {
         return ResponseEntity.ok(programService.update(id, program));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        programService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

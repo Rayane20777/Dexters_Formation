@@ -41,5 +41,14 @@ public class ProgramServiceImpl implements ProgramService {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not found");
     }
 
+    @Override
+    public void delete(UUID id) {
+        if (programRepository.existsById(id)) {
+            programRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not found");
+        }
+    }
+
 
 }
