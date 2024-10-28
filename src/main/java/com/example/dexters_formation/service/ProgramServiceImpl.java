@@ -24,7 +24,7 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public List<Program> getAll() {
-            return programRepository.findAll();
+        return programRepository.findAll();
     }
 
     @Override
@@ -49,6 +49,4 @@ public class ProgramServiceImpl implements ProgramService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not found");
         }
     }
-
-
 }
