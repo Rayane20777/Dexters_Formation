@@ -21,14 +21,14 @@ public class Class {
     @Column(nullable = false)
     private int roomNumber;
 
-    @OneToOne
-    private Instructor instructor;
-
-    @OneToMany
-    private List<Learner> learners;
-
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
 
+    @OneToMany(mappedBy = "eclass", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Learner> learners;
+
+    @OneToOne
+    @JoinColumn(name = "instructor_id", nullable = true)
+    private Instructor instructor;
 }

@@ -1,4 +1,11 @@
 package com.example.dexters_formation.repository;
 
-public interface InstructorRepository {
+import com.example.dexters_formation.entity.Instructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+@Repository
+public interface InstructorRepository extends JpaRepository<Instructor, UUID> {
 }

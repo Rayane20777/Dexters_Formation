@@ -41,6 +41,6 @@ public class Program {
     @Enumerated(EnumType.STRING)
     private ProgramStatus status;
 
-    @OneToMany(mappedBy = "program")
+    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Class> classes;
 }

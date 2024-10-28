@@ -2,15 +2,18 @@ package com.example.dexters_formation.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Learner extends User{
+public class Learner extends User {
     @Column
     private String level;
+
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private Class eclass;
 }
