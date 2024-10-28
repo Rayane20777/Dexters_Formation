@@ -31,4 +31,9 @@ public class LearnerController {
     public Learner getById(@PathVariable UUID id) {
         return learnerService.getById(id);
     }
+
+    @PutMapping("/{id}")
+    public Learner update(@PathVariable UUID id, @Valid @RequestBody Learner learner) {
+        return learnerService.update(id, learner);
+    }
 }

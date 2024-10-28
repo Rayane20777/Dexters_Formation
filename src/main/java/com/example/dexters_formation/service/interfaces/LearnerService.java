@@ -9,5 +9,6 @@ public interface LearnerService {
     Learner create(Learner learner);
     List<Learner> getAll();
     Learner getById(UUID id);
+    Learner update(UUID id, Learner learner);
 
 }

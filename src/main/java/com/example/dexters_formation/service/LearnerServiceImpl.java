@@ -28,4 +28,13 @@ public class LearnerServiceImpl implements LearnerService {
     public Learner getById(UUID id) {
         return learnerRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public Learner update(UUID id, Learner learner) {
+        if (learnerRepository.existsById(id)) {
+            learner.setId(id);
+            return learnerRepository.save(learner);
+        }
+        return null;
+    }
 }
