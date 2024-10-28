@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/programs")
@@ -23,5 +24,12 @@ public class ProgramController {
     @GetMapping
     public ResponseEntity<List<Program>> getAll() {
         return ResponseEntity.ok(programService.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Program> getById(@PathVariable UUID id) {
+        return programService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

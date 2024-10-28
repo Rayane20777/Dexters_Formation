@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,5 +24,12 @@ public class ProgramServiceImpl implements ProgramService {
     public List<Program> getAll() {
             return programRepository.findAll();
     }
+
+    @Override
+    public Optional<Program> getById(UUID id) {
+        return programRepository.findById(id);
+    }
+
+
 
 }
