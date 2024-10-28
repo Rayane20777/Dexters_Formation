@@ -6,6 +6,8 @@ import com.example.dexters_formation.service.interfaces.LearnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LearnerServiceImpl implements LearnerService {
@@ -14,5 +16,10 @@ public class LearnerServiceImpl implements LearnerService {
     @Override
     public Learner create(Learner learner) {
         return learnerRepository.save(learner);
+    }
+
+    @Override
+    public List<Learner> getAll() {
+        return learnerRepository.findAll();
     }
 }
