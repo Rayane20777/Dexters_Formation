@@ -10,5 +10,6 @@ public interface ProgramService {
     Program create(Program program);
     List<Program> getAll();
     Optional<Program> getById(UUID id);
+    Program update(UUID id, Program program);
 
 }

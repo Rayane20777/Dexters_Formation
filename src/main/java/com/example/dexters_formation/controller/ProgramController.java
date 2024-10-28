@@ -32,4 +32,9 @@ public class ProgramController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Program> update(@PathVariable UUID id, @Valid @RequestBody Program program) {
+        return ResponseEntity.ok(programService.update(id, program));
+    }
 }
