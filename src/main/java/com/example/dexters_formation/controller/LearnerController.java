@@ -36,4 +36,9 @@ public class LearnerController {
     public Learner update(@PathVariable UUID id, @Valid @RequestBody Learner learner) {
         return learnerService.update(id, learner);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable UUID id) {
+        learnerService.delete(id);
+    }
 }

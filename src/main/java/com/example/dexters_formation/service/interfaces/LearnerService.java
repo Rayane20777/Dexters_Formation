@@ -10,5 +10,6 @@ public interface LearnerService {
     List<Learner> getAll();
     Learner getById(UUID id);
     Learner update(UUID id, Learner learner);
+    void delete(UUID id);
 
 }

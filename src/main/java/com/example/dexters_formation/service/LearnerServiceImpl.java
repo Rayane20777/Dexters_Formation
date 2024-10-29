@@ -37,4 +37,11 @@ public class LearnerServiceImpl implements LearnerService {
         }
         return null;
     }
+
+    @Override
+    public void delete(UUID id) {
+        if (learnerRepository.existsById(id)) {
+            learnerRepository.deleteById(id);
+        }
+    }
 }
