@@ -10,4 +10,5 @@ public interface ClassesService {
     List<Classes> getAll();
     Classes getById(UUID id);
     Classes update(UUID id, Classes classes);
+    void delete(UUID id);
 }

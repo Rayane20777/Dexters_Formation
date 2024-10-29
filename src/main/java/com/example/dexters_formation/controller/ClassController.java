@@ -35,4 +35,9 @@ public class ClassController {
     public Classes update(@PathVariable UUID id, @Valid @RequestBody Classes classes) {
         return classesService.update(id, classes);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable UUID id) {
+        classesService.delete(id);
+    }
 }

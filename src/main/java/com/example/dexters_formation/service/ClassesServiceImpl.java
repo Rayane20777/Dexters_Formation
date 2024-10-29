@@ -37,4 +37,11 @@ public class ClassesServiceImpl  implements ClassesService {
         }
         return null;
     }
+
+    @Override
+    public void delete(UUID id) {
+        if (classesRepository.existsById(id)) {
+            classesRepository.deleteById(id);
+        }
+    }
 }
