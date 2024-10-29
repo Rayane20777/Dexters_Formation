@@ -6,6 +6,8 @@ import com.example.dexters_formation.repository.InstructorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class InstructorServiceImp implements InstructorService {
@@ -14,5 +16,10 @@ public class InstructorServiceImp implements InstructorService {
     @Override
     public Instructor create(Instructor instructor) {
         return instructorRepository.save(instructor);
+    }
+
+    @Override
+    public List<Instructor> getAll() {
+        return instructorRepository.findAll();
     }
 }
