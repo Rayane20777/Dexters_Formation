@@ -4,12 +4,10 @@ package com.example.dexters_formation.controller;
 import com.example.dexters_formation.entity.Classes;
 import com.example.dexters_formation.service.interfaces.ClassesService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,4 +20,8 @@ public class ClassController {
         classesService.create(classes);
     }
 
+    @GetMapping
+    public List<Classes> getAll() {
+        return classesService.getAll();
+    }
 }
