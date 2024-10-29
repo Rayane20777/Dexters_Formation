@@ -9,4 +9,5 @@ public interface ClassesService {
     Classes create(Classes classes);
     List<Classes> getAll();
     Classes getById(UUID id);
+    Classes update(UUID id, Classes classes);
 }

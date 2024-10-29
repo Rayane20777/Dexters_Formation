@@ -30,4 +30,9 @@ public class ClassController {
     public Classes getById(@PathVariable UUID id) {
         return classesService.getById(id);
     }
+
+    @PutMapping("/{id}")
+    public Classes update(@PathVariable UUID id, @Valid @RequestBody Classes classes) {
+        return classesService.update(id, classes);
+    }
 }

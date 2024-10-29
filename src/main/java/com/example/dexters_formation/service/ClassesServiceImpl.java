@@ -28,4 +28,13 @@ public class ClassesServiceImpl  implements ClassesService {
     public Classes getById(UUID id) {
         return classesRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public Classes update(UUID id, Classes classes) {
+        if (classesRepository.existsById(id)) {
+            classes.setId(id);
+            return classesRepository.save(classes);
+        }
+        return null;
+    }
 }
