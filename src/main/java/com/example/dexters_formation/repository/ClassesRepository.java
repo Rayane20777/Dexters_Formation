@@ -1,11 +1,11 @@
 package com.example.dexters_formation.repository;
 
-import com.example.dexters_formation.entity.Class;
+import com.example.dexters_formation.entity.Classes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface ClassRepository extends JpaRepository<Class, UUID> {
+public interface ClassesRepository extends JpaRepository<Classes, UUID> {
 }

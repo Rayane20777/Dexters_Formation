@@ -42,5 +42,5 @@ public class Program {
     private ProgramStatus status;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Class> classes;
+    private List<Classes> classes;
 }

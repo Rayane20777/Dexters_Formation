@@ -15,5 +15,5 @@ public class Learner extends User {
 
     @ManyToOne
     @JoinColumn(name = "class_id")
-    private Class eclass;
+    private Classes classes;
 }
