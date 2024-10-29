@@ -37,4 +37,11 @@ public class InstructorServiceImp implements InstructorService {
         }
         return null;
     }
+
+    @Override
+    public void delete(UUID id) {
+        if (instructorRepository.existsById(id)) {
+            instructorRepository.deleteById(id);
+        }
+    }
 }

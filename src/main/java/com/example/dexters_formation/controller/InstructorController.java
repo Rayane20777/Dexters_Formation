@@ -35,4 +35,9 @@ public class InstructorController {
     public Instructor update(@PathVariable UUID id, @Valid @RequestBody Instructor instructor) {
         return instructorService.update(id, instructor);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable UUID id) {
+        instructorService.delete(id);
+    }
 }

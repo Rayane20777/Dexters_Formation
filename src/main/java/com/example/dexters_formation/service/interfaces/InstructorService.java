@@ -10,4 +10,5 @@ public interface InstructorService {
     List<Instructor> getAll();
     Instructor getById(UUID id);
     Instructor update(UUID id, Instructor instructor);
+    void delete(UUID id);
 }
