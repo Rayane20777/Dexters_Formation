@@ -28,4 +28,13 @@ public class InstructorServiceImp implements InstructorService {
     public Instructor getById(UUID id) {
         return instructorRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public Instructor update(UUID id, Instructor instructor) {
+        if (instructorRepository.existsById(id)) {
+            instructor.setId(id);
+            return instructorRepository.save(instructor);
+        }
+        return null;
+    }
 }

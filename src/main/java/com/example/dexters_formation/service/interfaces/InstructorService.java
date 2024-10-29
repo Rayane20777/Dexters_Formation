@@ -9,4 +9,5 @@ public interface InstructorService {
     public Instructor create(Instructor instructor);
     List<Instructor> getAll();
     Instructor getById(UUID id);
+    Instructor update(UUID id, Instructor instructor);
 }

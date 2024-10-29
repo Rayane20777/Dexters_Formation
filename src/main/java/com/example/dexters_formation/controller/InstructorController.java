@@ -30,4 +30,9 @@ public class InstructorController {
     public Instructor getById(@PathVariable UUID id) {
         return instructorService.getById(id);
     }
+
+    @PutMapping("/{id}")
+    public Instructor update(@PathVariable UUID id, @Valid @RequestBody Instructor instructor) {
+        return instructorService.update(id, instructor);
+    }
 }
