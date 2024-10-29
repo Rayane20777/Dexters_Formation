@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Class {
+public class Classes {
     @Id
     @GeneratedValue
     private UUID id;

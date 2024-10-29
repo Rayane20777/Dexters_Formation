@@ -14,5 +14,5 @@ public class Instructor extends User {
     private String speciality;
 
     @OneToOne(mappedBy = "instructor", optional = true)
-    private Class eclass;
+    private Classes classes;
 }
