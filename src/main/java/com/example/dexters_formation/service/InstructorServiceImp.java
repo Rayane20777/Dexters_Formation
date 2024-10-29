@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +22,10 @@ public class InstructorServiceImp implements InstructorService {
     @Override
     public List<Instructor> getAll() {
         return instructorRepository.findAll();
+    }
+
+    @Override
+    public Instructor getById(UUID id) {
+        return instructorRepository.findById(id).orElse(null);
     }
 }
