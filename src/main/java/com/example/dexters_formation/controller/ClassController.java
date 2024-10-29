@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +24,10 @@ public class ClassController {
     @GetMapping
     public List<Classes> getAll() {
         return classesService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public Classes getById(@PathVariable UUID id) {
+        return classesService.getById(id);
     }
 }
