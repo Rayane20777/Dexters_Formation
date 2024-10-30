@@ -53,5 +53,18 @@ public class InstructorServiceImplTest {
         verify(instructorRepository).save(instructor);
     }
 
-   
+    @Test
+    void getAll() {
+        List<Instructor> instructors = Arrays.asList(instructor);
+        when(instructorRepository.findAll()).thenReturn(instructors);
+
+        List<Instructor> result = instructorService.getAll();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(instructor.getFirstName(), result.get(0).getFirstName());
+        verify(instructorRepository).findAll();
+    }
+
+
 } 
