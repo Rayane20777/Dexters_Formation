@@ -66,5 +66,16 @@ public class InstructorServiceImplTest {
         verify(instructorRepository).findAll();
     }
 
+    @Test
+    void getById() {
+        when(instructorRepository.findById(instructorId)).thenReturn(Optional.of(instructor));
 
+        Instructor result = instructorService.getById(instructorId);
+
+        assertNotNull(result);
+        assertEquals(instructor.getFirstName(), result.getFirstName());
+        verify(instructorRepository).findById(instructorId);
+    }
+
+    
 } 
