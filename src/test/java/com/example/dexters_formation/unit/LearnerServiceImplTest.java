@@ -52,5 +52,18 @@ public class LearnerServiceImplTest {
         verify(learnerRepository).save(learner);
     }
 
-    
+    @Test
+    void getAll() {
+        List<Learner> learners = Arrays.asList(learner);
+        when(learnerRepository.findAll()).thenReturn(learners);
+
+        List<Learner> result = learnerService.getAll();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(learner.getFirstName(), result.get(0).getFirstName());
+        verify(learnerRepository).findAll();
+    }
+
+   
 } 
