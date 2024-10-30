@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,6 +51,19 @@ public class ProgramServiceImplTest {
         assertNotNull(result);
         assertEquals(program.getTitle(), result.getTitle());
         verify(programRepository).save(program);
+    }
+
+    @Test
+    void getAll(){
+        List<Program> programs = Arrays.asList(program);
+        when(programRepository.findAll()).thenReturn(programs);
+
+        List<Program> result = programService.getAll();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(program.getTitle(), result.get(0).getTitle());
+        verify(programRepository).findAll();
     }
 
 }
