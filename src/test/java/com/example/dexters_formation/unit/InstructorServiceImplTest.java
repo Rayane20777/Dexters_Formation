@@ -76,7 +76,7 @@ public class InstructorServiceImplTest {
         assertEquals(instructor.getFirstName(), result.getFirstName());
         verify(instructorRepository).findById(instructorId);
     }
-    
+
     @Test
     void update() {
         when(instructorRepository.existsById(instructorId)).thenReturn(true);
