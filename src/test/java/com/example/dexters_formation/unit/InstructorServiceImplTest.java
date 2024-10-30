@@ -90,5 +90,13 @@ public class InstructorServiceImplTest {
         verify(instructorRepository).save(instructor);
     }
 
+    @Test
+    void delete() {
+        when(instructorRepository.existsById(instructorId)).thenReturn(true);
 
+        instructorService.delete(instructorId);
+
+        verify(instructorRepository).existsById(instructorId);
+        verify(instructorRepository).deleteById(instructorId);
+    }
 } 
