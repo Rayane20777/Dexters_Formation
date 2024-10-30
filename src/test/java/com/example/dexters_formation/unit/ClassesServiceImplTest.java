@@ -51,5 +51,29 @@ public class ClassesServiceImplTest {
         verify(classesRepository).save(classes);
     }
 
+    @Test
+    void getAll() {
+        List<Classes> classesList = Arrays.asList(classes);
+        when(classesRepository.findAll()).thenReturn(classesList);
+
+        List<Classes> result = classesService.getAll();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(classes.getName(), result.get(0).getName());
+        verify(classesRepository).findAll();
+    }
+
+    @Test
+    void getById() {
+        when(classesRepository.findById(classId)).thenReturn(Optional.of(classes));
+
+        Classes result = classesService.getById(classId);
+
+        assertNotNull(result);
+        assertEquals(classes.getName(), result.getName());
+        verify(classesRepository).findById(classId);
+    }
+
     
 } 
