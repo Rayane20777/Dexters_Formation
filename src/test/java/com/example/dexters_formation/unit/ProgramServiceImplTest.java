@@ -12,10 +12,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -65,5 +65,18 @@ public class ProgramServiceImplTest {
         assertEquals(program.getTitle(), result.get(0).getTitle());
         verify(programRepository).findAll();
     }
+
+    @Test
+    void getById(){
+        when(programRepository.findById(programId)).thenReturn(java.util.Optional.ofNullable(program));
+
+        Optional<Program> result = programService.getById(programId);
+
+        assertTrue(result.isPresent());
+        assertEquals(program.getTitle(), result.get().getTitle());
+        verify(programRepository).findById(programId);
+    }
+
+    
 
 }
