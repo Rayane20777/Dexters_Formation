@@ -1,6 +1,7 @@
 package com.example.dexters_formation.entity;
 
 import com.example.dexters_formation.entity.enums.ProgramStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -42,5 +43,6 @@ public class Program {
     private ProgramStatus status;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("program-classes")
     private List<Classes> classes;
 }
