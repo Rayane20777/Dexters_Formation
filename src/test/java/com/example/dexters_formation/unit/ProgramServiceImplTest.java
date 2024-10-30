@@ -89,4 +89,14 @@ public class ProgramServiceImplTest {
         verify(programRepository).existsById(programId);
         verify(programRepository).save(program);
     }
+
+    @Test
+    void delete() {
+        when(programRepository.existsById(programId)).thenReturn(true);
+
+        programService.delete(programId);
+
+        verify(programRepository).existsById(programId);
+        verify(programRepository).deleteById(programId);
+    }
 }
