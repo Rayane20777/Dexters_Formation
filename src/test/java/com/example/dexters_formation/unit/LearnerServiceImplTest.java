@@ -65,5 +65,16 @@ public class LearnerServiceImplTest {
         verify(learnerRepository).findAll();
     }
 
-   
+    @Test
+    void getById() {
+        when(learnerRepository.findById(learnerId)).thenReturn(Optional.of(learner));
+
+        Learner result = learnerService.getById(learnerId);
+
+        assertNotNull(result);
+        assertEquals(learner.getFirstName(), result.getFirstName());
+        verify(learnerRepository).findById(learnerId);
+    }
+
+    
 } 
