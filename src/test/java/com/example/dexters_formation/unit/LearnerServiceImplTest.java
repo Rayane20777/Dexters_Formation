@@ -76,5 +76,18 @@ public class LearnerServiceImplTest {
         verify(learnerRepository).findById(learnerId);
     }
 
-    
+    @Test
+    void update() {
+        when(learnerRepository.existsById(learnerId)).thenReturn(true);
+        when(learnerRepository.save(learner)).thenReturn(learner);
+
+        Learner result = learnerService.update(learnerId, learner);
+
+        assertNotNull(result);
+        assertEquals(learner.getFirstName(), result.getFirstName());
+        verify(learnerRepository).existsById(learnerId);
+        verify(learnerRepository).save(learner);
+    }
+
+   
 } 
