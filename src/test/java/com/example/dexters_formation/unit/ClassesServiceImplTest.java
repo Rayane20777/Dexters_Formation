@@ -88,4 +88,13 @@ public class ClassesServiceImplTest {
         verify(classesRepository).save(classes);
     }
 
+    @Test
+    void delete() {
+        when(classesRepository.existsById(classId)).thenReturn(true);
+
+        classesService.delete(classId);
+
+        verify(classesRepository).existsById(classId);
+        verify(classesRepository).deleteById(classId);
+    }
 } 
