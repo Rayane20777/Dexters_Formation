@@ -77,6 +77,16 @@ public class ProgramServiceImplTest {
         verify(programRepository).findById(programId);
     }
 
-    
+    @Test
+    void update() {
+        when(programRepository.existsById(programId)).thenReturn(true);
+        when(programRepository.save(program)).thenReturn(program);
 
+        Program result = programService.update(programId, program);
+
+        assertNotNull(result);
+        assertEquals(program.getTitle(), result.getTitle());
+        verify(programRepository).existsById(programId);
+        verify(programRepository).save(program);
+    }
 }
