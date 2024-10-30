@@ -75,5 +75,17 @@ public class ClassesServiceImplTest {
         verify(classesRepository).findById(classId);
     }
 
-    
+    @Test
+    void update() {
+        when(classesRepository.existsById(classId)).thenReturn(true);
+        when(classesRepository.save(classes)).thenReturn(classes);
+
+        Classes result = classesService.update(classId, classes);
+
+        assertNotNull(result);
+        assertEquals(classes.getName(), result.getName());
+        verify(classesRepository).existsById(classId);
+        verify(classesRepository).save(classes);
+    }
+
 } 
