@@ -76,6 +76,19 @@ public class InstructorServiceImplTest {
         assertEquals(instructor.getFirstName(), result.getFirstName());
         verify(instructorRepository).findById(instructorId);
     }
-
     
+    @Test
+    void update() {
+        when(instructorRepository.existsById(instructorId)).thenReturn(true);
+        when(instructorRepository.save(instructor)).thenReturn(instructor);
+
+        Instructor result = instructorService.update(instructorId, instructor);
+
+        assertNotNull(result);
+        assertEquals(instructor.getFirstName(), result.getFirstName());
+        verify(instructorRepository).existsById(instructorId);
+        verify(instructorRepository).save(instructor);
+    }
+
+
 } 
