@@ -89,5 +89,13 @@ public class LearnerServiceImplTest {
         verify(learnerRepository).save(learner);
     }
 
-   
+    @Test
+    void delete() {
+        when(learnerRepository.existsById(learnerId)).thenReturn(true);
+
+        learnerService.delete(learnerId);
+
+        verify(learnerRepository).existsById(learnerId);
+        verify(learnerRepository).deleteById(learnerId);
+    }
 } 
