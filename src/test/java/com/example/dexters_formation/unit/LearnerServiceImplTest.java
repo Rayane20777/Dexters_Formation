@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class LearnerServiceImplTest {
+class LearnerServiceImplTest {
 
     @Mock
     private LearnerRepository learnerRepository;

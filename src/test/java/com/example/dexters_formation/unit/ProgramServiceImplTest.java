@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ProgramServiceImplTest {
+class ProgramServiceImplTest {
 
     @Mock
     private ProgramRepository programRepository;
@@ -98,5 +100,29 @@ public class ProgramServiceImplTest {
 
         verify(programRepository).existsById(programId);
         verify(programRepository).deleteById(programId);
+    }
+
+    @Test
+    void updateNonExistentProgram() {
+        when(programRepository.existsById(programId)).thenReturn(false);
+        
+        assertThrows(ResponseStatusException.class, () -> {
+            programService.update(programId, program);
+        });
+        
+        verify(programRepository).existsById(programId);
+        verify(programRepository, never()).save(any(Program.class));
+    }
+
+    @Test
+    void deleteNonExistentProgram() {
+        when(programRepository.existsById(programId)).thenReturn(false);
+        
+        assertThrows(ResponseStatusException.class, () -> {
+            programService.delete(programId);
+        });
+        
+        verify(programRepository).existsById(programId);
+        verify(programRepository, never()).deleteById(any(UUID.class));
     }
 }

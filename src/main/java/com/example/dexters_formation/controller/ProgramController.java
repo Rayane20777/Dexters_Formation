@@ -4,7 +4,10 @@ import com.example.dexters_formation.entity.Program;
 import com.example.dexters_formation.service.interfaces.ProgramService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,6 +19,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProgramController {
     private final ProgramService programService;
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(ex.getReason());
+    }
 
     @ApiOperation(value = "Create a new program")
     @ApiResponses(value = {
@@ -43,9 +51,10 @@ public class ProgramController {
         @ApiResponse(code = 404, message = "Program not found")
     })
     @GetMapping("/{id}")
-    public Program getById(@PathVariable UUID id) {
+    public ResponseEntity<Program> getById(@PathVariable UUID id) {
         return programService.getById(id)
-                .orElseThrow(() -> new RuntimeException("Program not found"));
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not found"));
     }
 
     @ApiOperation(value = "Update a program", notes = "Updates a program based on ID")
