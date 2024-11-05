@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,6 +33,7 @@ public class LearnerController {
     }
 
     @ApiOperation(value = "Get all learners", notes = "Returns a list of all learners")
+    @ApiResponse(code = 200, message = "Successfully retrieved learners")
     @GetMapping
     public List<Learner> getAll() {
         return learnerService.getAll();
@@ -64,5 +67,77 @@ public class LearnerController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {
         learnerService.delete(id);
+    }
+
+    @ApiOperation(value = "Find learners by last name")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successfully retrieved learners")
+    })
+    @GetMapping("/by-lastname")
+    public List<Learner> findByLastName(@RequestParam String lastName) {
+        return learnerService.findByLastName(lastName);
+    }
+
+    @ApiOperation(value = "Find learners by first name and last name")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successfully retrieved learners")
+    })
+    @GetMapping("/by-full-name")
+    public List<Learner> findByFirstNameAndLastName(
+            @RequestParam String firstName,
+            @RequestParam String lastName) {
+        return learnerService.findByFirstNameAndLastName(firstName, lastName);
+    }
+
+    @ApiOperation(value = "Find learners by email domain")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successfully retrieved learners")
+    })
+    @GetMapping("/by-email")
+    public List<Learner> findByEmailContaining(@RequestParam String emailDomain) {
+        return learnerService.findByEmailContaining(emailDomain);
+    }
+
+    @ApiOperation(value = "Find learners in a specific class")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successfully retrieved learners")
+    })
+    @GetMapping("/by-class")
+    public List<Learner> findLearnersInClass(@RequestParam UUID classId) {
+        return learnerService.findLearnersInClass(classId);
+    }
+
+    @ApiOperation(value = "Find learners by level and program")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successfully retrieved learners")
+    })
+    @GetMapping("/by-level-and-program")
+    public List<Learner> findLearnersByLevelAndProgram(
+            @RequestParam String level,
+            @RequestParam UUID programId) {
+        return learnerService.findLearnersByLevelAndProgram(level, programId);
+    }
+
+    @ApiOperation(value = "Find learners by level with pagination")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successfully retrieved learners")
+    })
+    @GetMapping("/by-level")
+    public Page<Learner> findByLevel(
+            @RequestParam String level,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return learnerService.findByLevel(level, PageRequest.of(page, size));
+    }
+
+    @ApiOperation(value = "Find learners without classes")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successfully retrieved learners")
+    })
+    @GetMapping("/without-classes")
+    public Page<Learner> findByClassesIsNull(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return learnerService.findByClassesIsNull(PageRequest.of(page, size));
     }
 }

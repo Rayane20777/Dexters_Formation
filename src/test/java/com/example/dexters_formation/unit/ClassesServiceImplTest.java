@@ -68,10 +68,10 @@ class ClassesServiceImplTest {
     void getById() {
         when(classesRepository.findById(classId)).thenReturn(Optional.of(classes));
 
-        Classes result = classesService.getById(classId);
+        Optional<Classes> result = classesService.getById(classId);
 
         assertNotNull(result);
-        assertEquals(classes.getName(), result.getName());
+        assertEquals(classes.getName(), result.get().getName());
         verify(classesRepository).findById(classId);
     }
 
