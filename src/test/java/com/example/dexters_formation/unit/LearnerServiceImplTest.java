@@ -9,8 +9,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +43,7 @@ class LearnerServiceImplTest {
         learner.setFirstName("Jane");
         learner.setLastName("Smith");
         learner.setEmail("jane.smith@example.com");
+        learner.setLevel("INTERMEDIATE");
     }
 
     @Test
@@ -97,5 +103,75 @@ class LearnerServiceImplTest {
 
         verify(learnerRepository).existsById(learnerId);
         verify(learnerRepository).deleteById(learnerId);
+    }
+
+    @Test
+    void findByEmailContaining() {
+        String emailDomain = "@example.com";
+        List<Learner> learners = Arrays.asList(learner);
+        when(learnerRepository.findByEmailContaining(emailDomain)).thenReturn(learners);
+
+        List<Learner> result = learnerService.findByEmailContaining(emailDomain);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.get(0).getEmail().contains(emailDomain));
+        verify(learnerRepository).findByEmailContaining(emailDomain);
+    }
+
+    @Test
+    void findLearnersInClass() {
+        UUID classId = UUID.randomUUID();
+        List<Learner> learners = Arrays.asList(learner);
+        when(learnerRepository.findLearnersInClass(classId)).thenReturn(learners);
+
+        List<Learner> result = learnerService.findLearnersInClass(classId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(learnerRepository).findLearnersInClass(classId);
+    }
+
+    @Test
+    void findLearnersByLevelAndProgram() {
+        String level = "INTERMEDIATE";
+        UUID programId = UUID.randomUUID();
+        List<Learner> learners = Arrays.asList(learner);
+        when(learnerRepository.findLearnersByLevelAndProgram(level, programId)).thenReturn(learners);
+
+        List<Learner> result = learnerService.findLearnersByLevelAndProgram(level, programId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(level, result.get(0).getLevel());
+        verify(learnerRepository).findLearnersByLevelAndProgram(level, programId);
+    }
+
+    @Test
+    void findByLevel() {
+        String level = "INTERMEDIATE";
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Learner> page = new PageImpl<>(Arrays.asList(learner));
+        when(learnerRepository.findByLevel(level, pageable)).thenReturn(page);
+
+        Page<Learner> result = learnerService.findByLevel(level, pageable);
+
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(level, result.getContent().get(0).getLevel());
+        verify(learnerRepository).findByLevel(level, pageable);
+    }
+
+    @Test
+    void findByClassesIsNull() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Learner> page = new PageImpl<>(Arrays.asList(learner));
+        when(learnerRepository.findByClassesIsNull(pageable)).thenReturn(page);
+
+        Page<Learner> result = learnerService.findByClassesIsNull(pageable);
+
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        verify(learnerRepository).findByClassesIsNull(pageable);
     }
 } 
