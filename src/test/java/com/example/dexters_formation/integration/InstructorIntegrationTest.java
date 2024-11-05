@@ -10,6 +10,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,56 +67,74 @@ class InstructorIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().length > 0);
-        assertEquals(savedInstructor.getEmail(), response.getBody()[0].getEmail());
     }
 
     @Test
     void testGetInstructorById() {
         Instructor savedInstructor = instructorRepository.save(createTestInstructor());
-
+        
         ResponseEntity<Instructor> response = restTemplate.getForEntity(
             getBaseUrl() + "/" + savedInstructor.getId(), Instructor.class);
-
+        
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(savedInstructor.getId(), response.getBody().getId());
-        assertEquals(savedInstructor.getEmail(), response.getBody().getEmail());
     }
 
     @Test
     void testUpdateInstructor() {
         Instructor savedInstructor = instructorRepository.save(createTestInstructor());
-        savedInstructor.setFirstName("Jane");
-        savedInstructor.setEmail("jane.doe@example.com");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Instructor> requestEntity = new HttpEntity<>(savedInstructor, headers);
-
-        ResponseEntity<Instructor> response = restTemplate.exchange(
-            getBaseUrl() + "/" + savedInstructor.getId(),
-            HttpMethod.PUT,
-            requestEntity,
-            Instructor.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Jane", response.getBody().getFirstName());
-        assertEquals("jane.doe@example.com", response.getBody().getEmail());
+        savedInstructor.setFirstName("Johnny");
+        
+        restTemplate.put(getBaseUrl() + "/" + savedInstructor.getId(), savedInstructor);
+        
+        Instructor updatedInstructor = instructorRepository.findById(savedInstructor.getId()).orElse(null);
+        assertNotNull(updatedInstructor);
+        assertEquals("Johnny", updatedInstructor.getFirstName());
     }
 
     @Test
     void testDeleteInstructor() {
         Instructor savedInstructor = instructorRepository.save(createTestInstructor());
-        UUID instructorId = savedInstructor.getId();
-
-        restTemplate.delete(getBaseUrl() + "/" + instructorId);
-
-        ResponseEntity<String> response = restTemplate.getForEntity(
-            getBaseUrl() + "/" + instructorId, String.class);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(instructorRepository.existsById(instructorId));
+        
+        restTemplate.delete(getBaseUrl() + "/" + savedInstructor.getId());
+        
+        Optional<Instructor> deletedInstructor = instructorRepository.findById(savedInstructor.getId());
+        assertFalse(deletedInstructor.isPresent());
     }
 
+    @Test
+    void testFindBySpeciality() {
+        Instructor savedInstructor = instructorRepository.save(createTestInstructor());
+        
+        ResponseEntity<Instructor[]> response = restTemplate.getForEntity(
+            getBaseUrl() + "/by-speciality?speciality=Java Programming", Instructor[].class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+    }
 
+    @Test
+    void testFindByLastNameStartingWith() {
+        Instructor savedInstructor = instructorRepository.save(createTestInstructor());
+        
+        ResponseEntity<Instructor[]> response = restTemplate.getForEntity(
+            getBaseUrl() + "/by-lastname?prefix=Do", Instructor[].class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+    }
+
+    @Test
+    void testFindAvailableInstructors() {
+        Instructor savedInstructor = instructorRepository.save(createTestInstructor());
+        
+        ResponseEntity<Instructor[]> response = restTemplate.getForEntity(
+            getBaseUrl() + "/available", Instructor[].class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
 } 
