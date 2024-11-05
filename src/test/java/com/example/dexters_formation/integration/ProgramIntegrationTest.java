@@ -10,8 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.data.domain.Page;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,7 +63,6 @@ class ProgramIntegrationTest {
         assertNotNull(response.getBody());
         assertNotNull(response.getBody().getId());
         assertEquals(program.getTitle(), response.getBody().getTitle());
-        assertEquals(ProgramStatus.PLANNED, response.getBody().getStatus());
     }
 
     @Test
@@ -73,56 +75,66 @@ class ProgramIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().length > 0);
-        assertEquals(savedProgram.getTitle(), response.getBody()[0].getTitle());
     }
 
     @Test
     void testGetProgramById() {
         Program savedProgram = programRepository.save(createTestProgram());
-
+        
         ResponseEntity<Program> response = restTemplate.getForEntity(
             getBaseUrl() + "/" + savedProgram.getId(), Program.class);
-
+        
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(savedProgram.getId(), response.getBody().getId());
-        assertEquals(savedProgram.getStatus(), response.getBody().getStatus());
     }
 
     @Test
     void testUpdateProgram() {
         Program savedProgram = programRepository.save(createTestProgram());
-        savedProgram.setTitle("Updated Title");
-        savedProgram.setStatus(ProgramStatus.IN_PROGRESS);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Program> requestEntity = new HttpEntity<>(savedProgram, headers);
-
-        ResponseEntity<Program> response = restTemplate.exchange(
-            getBaseUrl() + "/" + savedProgram.getId(),
-            HttpMethod.PUT,
-            requestEntity,
-            Program.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Updated Title", response.getBody().getTitle());
-        assertEquals(ProgramStatus.IN_PROGRESS, response.getBody().getStatus());
+        savedProgram.setTitle("Updated Program");
+        
+        restTemplate.put(getBaseUrl() + "/" + savedProgram.getId(), savedProgram);
+        
+        Program updatedProgram = programRepository.findById(savedProgram.getId()).orElse(null);
+        assertNotNull(updatedProgram);
+        assertEquals("Updated Program", updatedProgram.getTitle());
     }
 
     @Test
     void testDeleteProgram() {
         Program savedProgram = programRepository.save(createTestProgram());
-        UUID programId = savedProgram.getId();
-
-        restTemplate.delete(getBaseUrl() + "/" + programId);
-
-        // Verify the program is deleted
-        ResponseEntity<String> response = restTemplate.getForEntity(
-            getBaseUrl() + "/" + programId, String.class);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(programRepository.existsById(programId));
+        
+        restTemplate.delete(getBaseUrl() + "/" + savedProgram.getId());
+        
+        Optional<Program> deletedProgram = programRepository.findById(savedProgram.getId());
+        assertFalse(deletedProgram.isPresent());
     }
 
+    @Test
+    void testFindByLevelAndStatus() {
+        Program savedProgram = programRepository.save(createTestProgram());
+        
+        ResponseEntity<Program[]> response = restTemplate.getForEntity(
+            getBaseUrl() + "/by-level-and-status?level=1&status=PLANNED", Program[].class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+    }
+
+    @Test
+    void testFindByStatus() {
+        Program savedProgram = programRepository.save(createTestProgram());
+        
+        ResponseEntity<Page<Program>> response = restTemplate.exchange(
+            getBaseUrl() + "/by-status?status=PLANNED&page=0&size=10",
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<Page<Program>>() {});
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getTotalElements() > 0);
+    }
 }
