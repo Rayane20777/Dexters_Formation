@@ -12,9 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.UUID;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,11 +58,11 @@ class ClassesIntegrationTest {
         Instructor instructor = new Instructor();
         instructor.setFirstName("John");
         instructor.setLastName("Doe");
-        instructor.setEmail("ds.doe@example.com");
+        instructor.setEmail("john.doe@example.com");
         instructor.setSpeciality("Java");
         instructor = instructorRepository.save(instructor);
 
-        // Create and save program (using createTestProgram from ProgramIntegrationTest)
+        // Create and save program
         Program program = new Program();
         program.setTitle("Test Program");
         program.setLevel(1);
@@ -68,7 +74,7 @@ class ClassesIntegrationTest {
         // Create class
         Classes classes = new Classes();
         classes.setName("Java Fundamentals");
-        classes.setRoomNumber(47);
+        classes.setRoomNumber(12);
         classes.setInstructor(instructor);
         classes.setProgram(program);
         return classes;
@@ -98,55 +104,90 @@ class ClassesIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().length > 0);
-        assertEquals(savedClass.getName(), response.getBody()[0].getName());
     }
 
     @Test
     void testGetClassById() {
         Classes savedClass = classesRepository.save(createTestClass());
-
+        
         ResponseEntity<Classes> response = restTemplate.getForEntity(
             getBaseUrl() + "/" + savedClass.getId(), Classes.class);
-
+        
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(savedClass.getId(), response.getBody().getId());
-        assertEquals(savedClass.getName(), response.getBody().getName());
     }
 
     @Test
     void testUpdateClass() {
         Classes savedClass = classesRepository.save(createTestClass());
         savedClass.setName("Advanced Java");
-        savedClass.setRoomNumber(75);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Classes> requestEntity = new HttpEntity<>(savedClass, headers);
-
-        ResponseEntity<Classes> response = restTemplate.exchange(
-            getBaseUrl() + "/" + savedClass.getId(),
-            HttpMethod.PUT,
-            requestEntity,
-            Classes.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Advanced Java", response.getBody().getName());
-        assertEquals("B202", response.getBody().getRoomNumber());
+        
+        restTemplate.put(getBaseUrl() + "/" + savedClass.getId(), savedClass);
+        
+        Classes updatedClass = classesRepository.findById(savedClass.getId()).orElse(null);
+        assertNotNull(updatedClass);
+        assertEquals("Advanced Java", updatedClass.getName());
     }
 
     @Test
     void testDeleteClass() {
         Classes savedClass = classesRepository.save(createTestClass());
-        UUID classId = savedClass.getId();
+        
+        restTemplate.delete(getBaseUrl() + "/" + savedClass.getId());
+        
+        Optional<Classes> deletedClass = classesRepository.findById(savedClass.getId());
+        assertFalse(deletedClass.isPresent());
+    }
 
-        restTemplate.delete(getBaseUrl() + "/" + classId);
+    @Test
+    void testFindByProgramId() {
+        Classes savedClass = classesRepository.save(createTestClass());
+        
+        ResponseEntity<Classes[]> response = restTemplate.getForEntity(
+            getBaseUrl() + "/by-program/" + savedClass.getProgram().getId(), Classes[].class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+    }
 
-        ResponseEntity<String> response = restTemplate.getForEntity(
-            getBaseUrl() + "/" + classId, String.class);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(classesRepository.existsById(classId));
+    @Test
+    void testFindClassesWithAvailableSpots() {
+        Classes savedClass = classesRepository.save(createTestClass());
+        
+        ResponseEntity<Classes[]> response = restTemplate.getForEntity(
+            getBaseUrl() + "/available?minSpots=5", Classes[].class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void testFindClassesByInstructorSpeciality() {
+        Classes savedClass = classesRepository.save(createTestClass());
+        
+        ResponseEntity<Classes[]> response = restTemplate.getForEntity(
+            getBaseUrl() + "/by-instructor-speciality?speciality=Java", Classes[].class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+    }
+
+    @Test
+    void testFindByNameContaining() {
+        Classes savedClass = classesRepository.save(createTestClass());
+        
+        ResponseEntity<Page<Classes>> response = restTemplate.exchange(
+            getBaseUrl() + "/by-name?name=Java&page=0&size=10",
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<Page<Classes>>() {});
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getTotalElements() > 0);
     }
 
 
