@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import com.example.dexters_formation.entity.enums.ProgramStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,10 +44,8 @@ class ProgramServiceImplTest {
         program = new Program();
         program.setId(programId);
         program.setTitle("Java Bootcamp");
-        program.setDescription("Intensive Java Programming Course");
         program.setLevel(2);
-        program.setDuration(12);
-        program.setStatus(ProgramStatus.ACTIVE);
+        program.setStatus(ProgramStatus.PLANNED);
         program.setStartDate(new Date());
         program.setEndDate(new Date());
         program.setMaxCapacity(30);
@@ -114,15 +113,15 @@ class ProgramServiceImplTest {
     @Test
     void findByLevelAndStatus() {
         List<Program> programs = Arrays.asList(program);
-        when(programRepository.findByLevelAndStatus(2, ProgramStatus.ACTIVE)).thenReturn(programs);
+        when(programRepository.findByLevelAndStatus(2, ProgramStatus.PLANNED)).thenReturn(programs);
 
-        List<Program> result = programService.findByLevelAndStatus(2, ProgramStatus.ACTIVE);
+        List<Program> result = programService.findByLevelAndStatus(2, ProgramStatus.PLANNED);
 
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(program.getLevel(), result.get(0).getLevel());
         assertEquals(program.getStatus(), result.get(0).getStatus());
-        verify(programRepository).findByLevelAndStatus(2, ProgramStatus.ACTIVE);
+        verify(programRepository).findByLevelAndStatus(2, ProgramStatus.PLANNED);
     }
 
     @Test
@@ -143,14 +142,14 @@ class ProgramServiceImplTest {
     void findByStatus() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Program> page = new PageImpl<>(Arrays.asList(program));
-        when(programRepository.findByStatus(ProgramStatus.ACTIVE, pageable)).thenReturn(page);
+        when(programRepository.findByStatus(ProgramStatus.PLANNED, pageable)).thenReturn(page);
 
-        Page<Program> result = programService.findByStatus(ProgramStatus.ACTIVE, pageable);
+        Page<Program> result = programService.findByStatus(ProgramStatus.PLANNED, pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
         assertEquals(program.getStatus(), result.getContent().get(0).getStatus());
-        verify(programRepository).findByStatus(ProgramStatus.ACTIVE, pageable);
+        verify(programRepository).findByStatus(ProgramStatus.PLANNED, pageable);
     }
 
     @Test
