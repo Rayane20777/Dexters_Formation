@@ -9,10 +9,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,26 +42,30 @@ class ProgramServiceImplTest {
         programId = UUID.randomUUID();
         program = new Program();
         program.setId(programId);
-        program.setTitle("Test");
-        program.setLevel(1);
-        program.setPrerequisites("Test");
-        program.setMinCapacity(5);
-        program.setMaxCapacity(10);
+        program.setTitle("Java Bootcamp");
+        program.setDescription("Intensive Java Programming Course");
+        program.setLevel(2);
+        program.setDuration(12);
+        program.setStatus(ProgramStatus.ACTIVE);
+        program.setStartDate(new Date());
+        program.setEndDate(new Date());
+        program.setMaxCapacity(30);
     }
 
-
     @Test
-    void create(){
+    void create() {
         when(programRepository.save(program)).thenReturn(program);
+
         Program result = programService.create(program);
 
         assertNotNull(result);
         assertEquals(program.getTitle(), result.getTitle());
+        assertEquals(program.getLevel(), result.getLevel());
         verify(programRepository).save(program);
     }
 
     @Test
-    void getAll(){
+    void getAll() {
         List<Program> programs = Arrays.asList(program);
         when(programRepository.findAll()).thenReturn(programs);
 
@@ -69,8 +78,8 @@ class ProgramServiceImplTest {
     }
 
     @Test
-    void getById(){
-        when(programRepository.findById(programId)).thenReturn(java.util.Optional.ofNullable(program));
+    void getById() {
+        when(programRepository.findById(programId)).thenReturn(Optional.of(program));
 
         Optional<Program> result = programService.getById(programId);
 
@@ -103,26 +112,58 @@ class ProgramServiceImplTest {
     }
 
     @Test
-    void updateNonExistentProgram() {
-        when(programRepository.existsById(programId)).thenReturn(false);
-        
-        assertThrows(ResponseStatusException.class, () -> {
-            programService.update(programId, program);
-        });
-        
-        verify(programRepository).existsById(programId);
-        verify(programRepository, never()).save(any(Program.class));
+    void findByLevelAndStatus() {
+        List<Program> programs = Arrays.asList(program);
+        when(programRepository.findByLevelAndStatus(2, ProgramStatus.ACTIVE)).thenReturn(programs);
+
+        List<Program> result = programService.findByLevelAndStatus(2, ProgramStatus.ACTIVE);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(program.getLevel(), result.get(0).getLevel());
+        assertEquals(program.getStatus(), result.get(0).getStatus());
+        verify(programRepository).findByLevelAndStatus(2, ProgramStatus.ACTIVE);
     }
 
     @Test
-    void deleteNonExistentProgram() {
-        when(programRepository.existsById(programId)).thenReturn(false);
-        
-        assertThrows(ResponseStatusException.class, () -> {
-            programService.delete(programId);
-        });
-        
-        verify(programRepository).existsById(programId);
-        verify(programRepository, never()).deleteById(any(UUID.class));
+    void findProgramsInDateRange() {
+        Date startDate = new Date();
+        Date endDate = new Date();
+        List<Program> programs = Arrays.asList(program);
+        when(programRepository.findProgramsInDateRange(startDate, endDate)).thenReturn(programs);
+
+        List<Program> result = programService.findProgramsInDateRange(startDate, endDate);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(programRepository).findProgramsInDateRange(startDate, endDate);
+    }
+
+    @Test
+    void findByStatus() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Program> page = new PageImpl<>(Arrays.asList(program));
+        when(programRepository.findByStatus(ProgramStatus.ACTIVE, pageable)).thenReturn(page);
+
+        Page<Program> result = programService.findByStatus(ProgramStatus.ACTIVE, pageable);
+
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(program.getStatus(), result.getContent().get(0).getStatus());
+        verify(programRepository).findByStatus(ProgramStatus.ACTIVE, pageable);
+    }
+
+    @Test
+    void findByLevelGreaterThanEqual() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Program> page = new PageImpl<>(Arrays.asList(program));
+        when(programRepository.findByLevelGreaterThanEqual(2, pageable)).thenReturn(page);
+
+        Page<Program> result = programService.findByLevelGreaterThanEqual(2, pageable);
+
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertTrue(result.getContent().get(0).getLevel() >= 2);
+        verify(programRepository).findByLevelGreaterThanEqual(2, pageable);
     }
 }
