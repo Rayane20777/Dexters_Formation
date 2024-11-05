@@ -2,7 +2,7 @@ package com.example.dexters_formation.unit;
 
 import com.example.dexters_formation.entity.Instructor;
 import com.example.dexters_formation.repository.InstructorRepository;
-import com.example.dexters_formation.service.InstructorServiceImp;
+import com.example.dexters_formation.service.InstructorServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ class InstructorServiceImplTest {
     private InstructorRepository instructorRepository;
 
     @InjectMocks
-    private InstructorServiceImp instructorService;
+    private InstructorServiceImpl instructorService;
 
     private Instructor instructor;
     private UUID instructorId;

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -44,7 +45,7 @@ public class InstructorController {
         @ApiResponse(code = 404, message = "Instructor not found")
     })
     @GetMapping("/{id}")
-    public Instructor getById(@PathVariable UUID id) {
+    public Optional<Instructor> getById(@PathVariable UUID id) {
         return instructorService.getById(id);
     }
 
